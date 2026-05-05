@@ -2,7 +2,7 @@
 
 End-to-end AI film production for Claude Code. The agent handles creative decisions (story, prompts, pacing); pre-built scripts handle the API plumbing across image, video, audio, and final assembly.
 
-> Listed on [skills.sh](https://skills.sh) — install via Claude Code skill conventions.
+> Installable via the [skills.sh](https://skills.sh) CLI: `npx skills add realaman90/skills`
 
 ## What it does
 
