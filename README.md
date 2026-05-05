@@ -2,8 +2,6 @@
 
 End-to-end AI film production for Claude Code. The agent handles creative decisions (story, prompts, pacing); pre-built scripts handle the API plumbing across image, video, audio, and final assembly.
 
-> Installable via the [skills.sh](https://skills.sh) CLI: `npx skills add realaman90/skills`
-
 ## What it does
 
 | Stage | Tool | Backed by |
@@ -19,20 +17,13 @@ Character consistency, first/last-frame interpolation, clip extension, audio-to-
 
 ## Install
 
-Via the [skills.sh](https://skills.sh) CLI (recommended — works for Claude Code, OpenCode, Codex, Cursor, and 50+ other agents):
-
-```bash
-npx skills add realaman90/skills          # interactive
-npx skills add realaman90/skills -g -y    # global, non-interactive
-```
-
-Or clone directly into Claude Code's skills directory:
+Clone into Claude Code's skills directory:
 
 ```bash
 git clone https://github.com/realaman90/skills.git ~/.claude/skills/ai-film-studio
 ```
 
-Either way, install the Python deps:
+Then install the Python deps:
 
 ```bash
 pip install -r requirements.txt
