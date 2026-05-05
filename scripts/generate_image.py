@@ -1,0 +1,98 @@
+"""Generate a single image using Nano Banana 2 (Gemini image generation).
+
+Usage:
+    # Text-to-image
+    python scripts/generate_image.py --prompt "A cat on a hill at sunset" --output cat.png
+
+    # With character reference image
+    python scripts/generate_image.py --prompt "Same person walking in rain" --ref refs/char.png --output scene.png
+
+    # With aspect ratio and resolution
+    python scripts/generate_image.py --prompt "..." --output scene.png --aspect 16:9 --size 2K
+
+    # Edit existing image
+    python scripts/generate_image.py --prompt "Remove the person" --edit source.png --output edited.png
+
+    # Multiple reference images
+    python scripts/generate_image.py --prompt "..." --ref ref1.png --ref ref2.png --output scene.png
+"""
+import os, sys, io, argparse, time
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate image with Nano Banana 2")
+    parser.add_argument("--prompt", required=True, help="Image generation prompt")
+    parser.add_argument("--output", required=True, help="Output file path (.png)")
+    parser.add_argument("--ref", action="append", default=[], help="Reference image path (repeatable, up to 4)")
+    parser.add_argument("--edit", default=None, help="Source image to edit (inpainting/modification)")
+    parser.add_argument("--aspect", default="16:9", help="Aspect ratio (default: 16:9)")
+    parser.add_argument("--size", default=None, help="Image size: 512, 1K, 2K, 4K")
+    parser.add_argument("--model", default="gemini-3.1-flash-image-preview", help="Model ID")
+    parser.add_argument("--retries", type=int, default=3, help="Max retry attempts")
+    parser.add_argument("--skip-existing", action="store_true", help="Skip if output already exists")
+    args = parser.parse_args()
+
+    if args.skip_existing and os.path.exists(args.output):
+        print(f"SKIP {args.output} (exists)")
+        return
+
+    from google import genai
+    from google.genai import types
+    from PIL import Image
+
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
+    # Build config
+    image_config_kwargs = {"aspect_ratio": args.aspect}
+    if args.size:
+        image_config_kwargs["image_size"] = args.size
+
+    config = types.GenerateContentConfig(
+        response_modalities=["TEXT", "IMAGE"],
+        image_config=types.ImageConfig(**image_config_kwargs),
+    )
+
+    # Build content
+    contents = []
+
+    if args.edit:
+        # Edit mode: load source image
+        source = Image.open(args.edit)
+        buf = io.BytesIO()
+        source.save(buf, format="PNG")
+        contents.append(types.Part.from_bytes(data=buf.getvalue(), mime_type="image/png"))
+    elif args.ref:
+        # Reference mode: load reference images
+        for ref_path in args.ref:
+            ref_img = Image.open(ref_path)
+            contents.append(ref_img)
+
+    contents.append(args.prompt)
+
+    # Generate with retry
+    os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
+
+    for attempt in range(args.retries):
+        try:
+            print(f"Generating (attempt {attempt+1}/{args.retries})...")
+            response = client.models.generate_content(
+                model=args.model,
+                contents=contents,
+                config=config,
+            )
+            for part in response.candidates[0].content.parts:
+                if part.inline_data is not None:
+                    img = Image.open(io.BytesIO(part.inline_data.data))
+                    img.save(args.output)
+                    print(f"SAVED {args.output} ({img.size[0]}x{img.size[1]})")
+                    return
+            print("No image in response")
+        except Exception as e:
+            print(f"ERROR: {e}")
+            if attempt < args.retries - 1:
+                time.sleep(3 * (attempt + 1))
+
+    print(f"FAILED after {args.retries} attempts")
+    sys.exit(1)
+
+if __name__ == "__main__":
+    main()
