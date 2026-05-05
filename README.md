@@ -17,13 +17,20 @@ Character consistency, first/last-frame interpolation, clip extension, audio-to-
 
 ## Install
 
-Clone into Claude Code's skills directory:
+With the open-source [`skills`](https://github.com/vercel-labs/skills) CLI (works for Claude Code, OpenCode, Codex, Cursor, and 50+ other agents):
+
+```bash
+npx skills add realaman90/skills          # interactive
+npx skills add realaman90/skills -g -y    # global, non-interactive
+```
+
+Or clone straight into Claude Code's skills directory:
 
 ```bash
 git clone https://github.com/realaman90/skills.git ~/.claude/skills/ai-film-studio
 ```
 
-Then install the Python deps:
+Either way, install the Python deps:
 
 ```bash
 pip install -r requirements.txt
