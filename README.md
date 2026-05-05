@@ -19,11 +19,27 @@ Character consistency, first/last-frame interpolation, clip extension, audio-to-
 
 ## Install
 
+Via the [skills.sh](https://skills.sh) CLI (recommended — works for Claude Code, OpenCode, Codex, Cursor, and 50+ other agents):
+
+```bash
+npx skills add realaman90/skills          # interactive
+npx skills add realaman90/skills -g -y    # global, non-interactive
+```
+
+Or clone directly into Claude Code's skills directory:
+
 ```bash
 git clone https://github.com/realaman90/skills.git ~/.claude/skills/ai-film-studio
 ```
 
-That path makes the skill discoverable to Claude Code. Trigger words: *film, movie, video, storyboard, animate, scene, voiceover, narration, soundtrack, clip, short film*.
+Either way, install the Python deps:
+
+```bash
+pip install -r requirements.txt
+brew install ffmpeg          # macOS
+```
+
+Trigger words: *film, movie, video, storyboard, animate, scene, voiceover, narration, soundtrack, clip, short film*.
 
 ## Setup
 
@@ -31,9 +47,6 @@ That path makes the skill discoverable to Claude Code. Trigger words: *film, mov
 cp config.env.example config.env
 # fill in your keys, then:
 source config.env
-
-pip install google-genai pillow requests
-brew install ffmpeg          # macOS
 ```
 
 Required keys (free tiers exist for most):

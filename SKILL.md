@@ -1,10 +1,14 @@
 ---
 name: ai-film-studio
 description: |
-  AI film production studio with pre-built scripts. Generates images (Nano Banana 2), video (Veo 3.1), audio (ElevenLabs), and assembles final films.
+  AI film production studio with pre-built scripts. Generates images (Nano Banana 2), video (Veo 3.1, Seedance 2.0, LTX 2.3), audio (ElevenLabs), and assembles final films via ffmpeg or Remotion.
   Use when: creating short films, storyboards, video scenes, voiceovers, music, sound effects, or any AI-powered media creation.
   Trigger words: film, movie, video, storyboard, animate, scene, voiceover, narration, soundtrack, clip, short film.
 user-invocable: true
+metadata:
+  author: realaman90
+  version: "1.0.0"
+  homepage: "https://github.com/realaman90/skills"
 ---
 
 # AI Film Studio
